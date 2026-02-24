@@ -4,30 +4,69 @@ modules:
   - type: dnf
     install:
       packages:
-        - fcitx5-qt
-        - fcitx5-gtk
-        - fcitx5-chinese-addons
-        - fcitx5-hangul
-        - fcitx5-libthai
-        - fcitx5-mozc
-        - fcitx5-sayura
-        - fcitx5-unikey
-        - fcitx5-configtool
-        - kcm-fcitx5
         - icoutils
-        - kate
         - kf6-kimageformats
         - kio-admin
         - ksshaskpass
         - qt6-qtimageformats
+
+        # Office Suite
+        - autocorr-pt
+        - libreoffice-calc
+        - libreoffice-draw
+        - libreoffice-filters
+        - libreoffice-impress
+        - libreoffice-kf6
+        - libreoffice-langpack-pt-BR
+        - libreoffice-math
+        - libreoffice-opensymbol-fonts
+        - libreoffice-pdfimport
+        - libreoffice-writer
+
+        # Power Management
+        - switcheroo-control
+
+        # System Integration & Tools
+        - plasma-firewall
+        - kcm-plasmalogin
+        - plasma-login-manager
       exclude:
         - ffmpegthumbnailer
         - plasma-discover-rpm-ostree
+        - kdebugsettings
+        - plasma-drkonqi
+        - plasma-welcome
+        - firefox
+        - firefox-langpacks
+        - firewall-config
+        - toolbox
+        - kde-settings-sddm
+        - sddm
+        - sddm-breeze
+        - sddm-kcm
+        - sddm-wayland-plasma
     remove:
       auto-remove: false
       packages:
         - ffmpegthumbnailer
         - plasma-discover-rpm-ostree
+        - kdebugsettings
+        - plasma-drkonqi
+        - plasma-welcome
+        - firefox
+        - firefox-langpacks
+        - firewall-config
+        - toolbox
+        - kde-settings-sddm
+        - sddm
+        - sddm-breeze
+        - sddm-kcm
+        - sddm-wayland-plasma
   - type: script
     snippets:
       - dnf5 versionlock add "qt6-*"
+
+  - type: systemd
+    system:
+      enabled:
+        - plasmalogin.service

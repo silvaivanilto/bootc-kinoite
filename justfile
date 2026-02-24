@@ -7,7 +7,7 @@ export BB_GENISO_VARIANT := "kinoite"
 build *args:
     bluebuild build {{args}}
 
-build-all: (build "recipes/*.yml")
+build-all: (build "recipes/fedora-kinoite-nvidia-latest.yml")
 
 generate-iso recipe:
     #!/usr/bin/env nu

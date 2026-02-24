@@ -1,0 +1,32 @@
+---
+# yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
+modules:
+  - type: dnf
+    repos:
+      copr:
+        - bieszczaders/kernel-cachyos
+        - bieszczaders/kernel-cachyos-addons
+    install:
+      packages:
+        - kernel-cachyos
+        - cachyos-settings
+        - scx-scheds
+        - scx-tools
+    remove:
+      packages:
+        - kernel
+        - kernel-core
+        - kernel-modules
+        - kernel-modules-core
+        - kernel-modules-extra
+        - zram-generator-defaults
+
+  - type: script
+    snippets:
+      - mkdir -p /etc/kernel/postinst.d
+      - |
+        echo '#!/bin/sh
+        set -e
+        grubby --set-default=/boot/$(ls /boot | grep vmlinuz.*cachy | sort -V | tail -1)' > /etc/kernel/postinst.d/99-default
+      - chmod +x /etc/kernel/postinst.d/99-default
+      - dracut -f

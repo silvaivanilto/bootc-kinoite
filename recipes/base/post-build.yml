@@ -1,17 +1,30 @@
 ---
 # yaml-language-server: $schema=https://schema.blue-build.org/module-list-v1.json
 modules:
-  - type: script
-    env:
-      PUBLIC_KEY_DER_PATH: /etc/pki/akmods/certs/akmods-blue-build.der
-    secrets:
-      - type: file
-        source: ./MOK.priv
-        mount: 
-          type: file
-          destination: /tmp/certs/private_key.priv
-    scripts:
-      - signkernel.sh
+  - type: default-flatpaks
+    configurations:
+      - scope: system
+        notify: false
+        repo:
+          url: https://dl.flathub.org/repo/flathub.flatpakrepo
+          name: flathub
+          title: Flathub
+        install:
+          # --- Containers & Virtualization ---
+          - io.github.DenysMb.Kontainer
+
+          # --- KDE Media & Utilities ---
+          - org.kde.elisa
+          - org.kde.haruna
+          - org.kde.kalk
+          - org.kde.koko
+          - org.kde.marknote
+
+          # --- KDE Office & Productivity ---
+          - org.kde.merkuro
+          - org.kde.okular
+          - org.kde.skanpage
+
   - type: initramfs
     env:
-      DRACUT_NO_XATTR: '1'
+      DRACUT_NO_XATTR: "1"

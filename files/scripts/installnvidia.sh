@@ -22,7 +22,12 @@ chmod 1777 /var/tmp
 ##################################
 # Repository setup
 ##################################
-KERNEL_VERSION="$(rpm -q "kernel" --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
+if rpm -q kernel-cachyos > /dev/null 2>&1; then
+    KERNEL_NAME="kernel-cachyos"
+else
+    KERNEL_NAME="kernel"
+fi
+KERNEL_VERSION="$(rpm -q "$KERNEL_NAME" --queryformat '%{VERSION}-%{RELEASE}.%{ARCH}')"
 RELEASE="$(rpm -E '%fedora.%_arch')"
 if [[ "$IMAGE_NAME" == *"open"* ]]; then
     curl -fLsS --retry 5 -o /etc/yum.repos.d/negativo17-fedora-nvidia.repo https://negativo17.org/repos/fedora-nvidia.repo
@@ -39,7 +44,11 @@ fi
 #################################
 # Kernel module
 #################################
-dnf install -y --setopt=install_weak_deps=False "kernel-devel-matched-$(rpm -q 'kernel' --queryformat '%{VERSION}')"
+if [[ "$KERNEL_NAME" == "kernel-cachyos" ]]; then
+    dnf install -y --setopt=install_weak_deps=False kernel-cachyos-devel
+else
+    dnf install -y --setopt=install_weak_deps=False "kernel-devel-matched-$(rpm -q 'kernel' --queryformat '%{VERSION}')"
+fi
 
 dnf install -y --setopt=install_weak_deps=False akmods gcc-c++
 cp /usr/sbin/akmodsbuild /usr/sbin/akmodsbuild.backup
@@ -61,8 +70,6 @@ modinfo /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset,-p
 # shellcheck disable=SC2086
 modinfo -l /usr/lib/modules/${KERNEL_VERSION}/extra/nvidia/nvidia{,-drm,-modeset,-peermem,-uvm}.ko.xz
 
-chmod +x ./signmodules.sh
-./signmodules.sh "nvidia"
 
 ##################################
 # Extra packages
@@ -91,7 +98,7 @@ semodule -i nvidia-container.pp
 ##################################
 # Cleanup
 ##################################
-dnf -y remove akmod-nvidia akmods kernel-devel kernel-headers
+dnf -y remove akmod-nvidia akmods kernel-devel kernel-headers kernel-cachyos-devel
 
 if [ -f /etc/yum.repos.d/fedora-multimedia.repo ]; then
     sed -i 's/^enabled=.*/enabled=1/' /etc/yum.repos.d/fedora-multimedia.repo
